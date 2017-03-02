@@ -1,0 +1,79 @@
+# Compiles and prints a list of names of user inputted friends
+stopProgram = false;
+friendList = []; # This is tricky because it is an empty list. Should it be a simple statement? Whats on rhs of assign?
+enemyList = ["St. Mary's", "BYU", "Arizona", "???"];
+i = 0;
+
+println("Hello " + readstr("Enter your name ")); # Yes this is ugly, its just a test
+
+while not stopProgram do
+    friend = readstr("Enter a name of a friend: ");
+    friendList[i] = friend;
+
+    println("Friend list: ");
+
+    j = 0;
+    while j <= i and not stopProgram do
+        print(friendList[j]);
+        print(", ");
+        j = j + 2;
+        j = j - 1;
+        j = j / 1 * 1;
+    end
+
+    if z < 1 or z >= 3 or j != 5 and z > 0 then
+        print("Wowee that doesn't make any logical sense");
+    else
+        z = z % 1;
+    end
+
+
+    i = i + 1;
+    shouldContinue = readint("Enter 0 if you would like to quit. Enter 1 if you want to continue to use the program");
+     if shouldContinue == 0 then
+       stopProgram = true;
+     elseif shouldContinue == 1 then
+        stopProgram = false;
+     else
+       stopProgram = false;
+    end
+
+end
+
+# Has Primitives Types? (3/3)
+    # Integer - Yes
+    # String - Yes
+    # Booleans - Yes
+# Has List Types?
+    # Empty List - Yes
+    # List with Items - Yes
+# Has Assignment Statements?
+    # Yes
+# Has Output Statements? (2/2)
+    # Println - Yes
+    # Print - Yes
+# Has Math Operators? (5/5)
+    # + - Yes
+    # - - Yes
+    # * - Yes
+    # / - Yes
+    # % - Yes
+#Has Relational Operators? (6/6)
+    # == - Yes
+    # <  - Yes
+    # >  - Yes
+    # <= - Yes
+    # >= - Yes
+    # != - Yes
+#Has Boolean Connectives? (3/3)
+    # and - Yes
+    # or - Yes
+    # not - Yes
+#Has Input Expressions? (2/2)
+    # readint() - Yes
+    # readstr() - Yes
+#Has While Statement?
+    # Yes
+#Has Conditional Statements? (2/2)
+    # elseif - Yes
+    # else - Yes
