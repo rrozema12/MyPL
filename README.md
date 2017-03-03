@@ -38,8 +38,8 @@ The language constructs supported by MyPL are described in more detail below.
 11. **Comments**
     > MyPL uses Python-like comments (#)
 
-## Valid Grammar
-The MyPL language is based upon the following grammar:
+## Grammar Rules
+The proper syntax is defined by these grammars:
 ```
 <stmts> ::= <stmt> <stmts> | empty
 <stmt> ::= <output> | <assign> | <cond> | <loop>
@@ -61,8 +61,8 @@ The MyPL language is based upon the following grammar:
 <bool_rel> ::= EQUAL | LESS_THAN | GREATER_THAN | LESS_THAN_EQUAL | GREATER_THAN_EQUAL | NOT_EQUAL
 <loop> ::= WHILE <bexpr> DO <stmts> END
 ```
-## Sample MyPL Program
-The following are some simple examples of statements in MyPL:
+## Sample MyPL Programs
+The following are some examples of programs in MyPL:
 ```
 # obligatory hello world program
 println("Hello world!");
