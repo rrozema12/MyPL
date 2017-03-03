@@ -1,8 +1,6 @@
 # Interpreter for a Made up Language MyPL
 
-## Informal Description of MyPL Language
-The language supports basic assignment statements, arithmetic expressions, conditionals, loops, lists, and basic input/output. All variables are implicitly typed (i.e., the types of variables are inferred from their values). Programs consist of a sequence of statements given within a single file.  
-
+## MyPL Language
 The language constructs supported by MyPL are described in more detail below.
 
 1. **Primitive Data Types**   
@@ -38,7 +36,7 @@ The language constructs supported by MyPL are described in more detail below.
 11. **Comments**
     > MyPL uses Python-like comments (#)
 
-## Grammar Rules
+## Grammar Rules for MyPL
 The proper syntax is defined by these grammars:
 ```
 <stmts> ::= <stmt> <stmts> | empty
@@ -93,7 +91,7 @@ print(", i = ");
 println(i);
 ```
 
-## Running the application
+## Running the Program
 Run the application with this command
 ```bash
 python hw6.py my_pl_file.txt
