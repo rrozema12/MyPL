@@ -1,9 +1,7 @@
 # Interpreter for a Made up Language MyPL
 
 ## Description
-The language supports basic assignment statements, arithmetic expressions, conditionals, loops, and basic input/output. All variables are implicitly typed (i.e., the types of variables are inferred from their values). Programs consist of a sequence of statements given within a single file.  
-
-The language constructs supported by MyPL are described in more detail below.
+MyPL supported elements are described below.
 
 1. **Primitive Data Types**   
     > The data types that MyPL uses are integers, strings (denoted with double quotes), and booleans (either true or false).
@@ -21,7 +19,7 @@ The language constructs supported by MyPL are described in more detail below.
     > Relational operators such as ==, <, >, <=, >=, and != are all supported.
 
 6. **Boolean Connectives**
-    > Connectives such as and, or, and not are all supported
+    > Connectives such as and, or, and not are all supported.
 
 7. **Input Expressions**
     > Valid user input prompts are readint(msg) and readstr(msg) where msg is of type string.
@@ -33,9 +31,9 @@ The language constructs supported by MyPL are described in more detail below.
     > A condition statement takes the form “if bool-expr then stmts elseif bool-expr then stmts else stmts end”. A conditional statement can have zero or more elseif clauses and zero or one else clause. A conditional statement always ends with an “end” reserved word. Note that elseif is a distinct reserved word and should be used instead of an else followed by an if.
 
 10. **Comments**
-    > MyPL uses Python-like comments (#)
+    > MyPL uses Python-like comments by using a #
 
-## Valid Grammar
+## Grammar to construct a program
 The MyPL language is based upon the following grammar:
 ```
 <stmts> ::= <stmt> <stmts> | empty
@@ -58,8 +56,7 @@ The MyPL language is based upon the following grammar:
 <bool_rel> ::= EQUAL | LESS_THAN | GREATER_THAN | LESS_THAN_EQUAL | GREATER_THAN_EQUAL | NOT_EQUAL
 <loop> ::= WHILE <bexpr> DO <stmts> END
 ```
-## Sample MyPL Program
-The following are some simple examples of statements in MyPL:
+## Example of a Simple MyPL Program
 ```
 # obligatory hello world program
 println("Hello world!");
@@ -91,7 +88,7 @@ println(i);
 ```
 
 ## Running the application
-Run the application with this command
+Run the program with this command in the terminal
 ```
 python hw6.py ../test/my_pl_file.txt
 ```
