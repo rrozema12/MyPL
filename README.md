@@ -93,7 +93,7 @@ println(i);
 ## Running the application
 Run the application with this command
 ```
-python hw6.py my_pl_file.txt
+python hw6.py ../test/my_pl_file.txt
 ```
 
 ## Example Output

@@ -1,0 +1,378 @@
+"""
+Ryan Rozema
+hw6.py
+hw6
+"""
+import sys
+import lexer
+import parser
+import error
+import mypl_type_checker as type_checker
+import mypl_interpreter
+
+
+def main(filename):
+    try:
+        file_stream = open(filename, 'r')
+        the_lexer = lexer.Lexer(file_stream)
+        the_parser = parser.Parser(the_lexer)
+        stmt_list = the_parser.parse()
+        checker = type_checker.TypeChecker()
+        stmt_list.accept(checker)
+        interpreter = mypl_interpreter.Interpreter()
+        stmt_list.accept(interpreter)
+
+    except IOError as e:
+        print "error: unable to open file '" + filename + "'"
+        sys.exit(1)
+    except error.Error as e:
+        print e
+        sys.exit(1)
+
+if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        print 'usage:', sys.argv[0], 'source - code - file'
+        sys.exit(1)
+    else:
+        main(sys.argv[1])
+"""
+Ryan Rozema
+mypl_interpeter.py
+hw6
+"""
+
+from mypl_ast import Visitor
+from mypl_symbol_table import SymbolTable
+import mytoken as token
+import sys
+
+
+class Interpreter(Visitor):
+
+    def __init__(self):
+        """ Initialzes the Interpreter """
+        self.sym_table = SymbolTable()  # var_name -> value
+        self.current_value = None  # last evaluation result
+        self.flag = False
+
+    def visit_stmt_list(self, stmt_list):
+        """ Takes a statement and starts the TypeChecker """
+        self.sym_table.push_environment()
+        for stmt in stmt_list.stmts:
+            stmt.accept(self)
+        self.sym_table.pop_environment()
+
+    def visit_simple_bool_expr(self, simple_bool_expr):
+        """ Accepts a simple boolean expression """
+        simple_bool_expr.expr.accept(self)
+
+    def visit_complex_bool_expr(self, complex_bool_expr):
+        """ When a complex boolean expression is visited the boolean expression
+        needs to be evaluated. This code will do that by actually using if
+        statements to compute the truth values. """
+        complex_bool_expr.first_expr.accept(self)
+        temp = self.current_value
+        complex_bool_expr.second_expr.accept(self)
+        if complex_bool_expr.negated:
+            if complex_bool_expr.bool_rel.tokentype == token.EQUAL:
+                if self.current_value == temp:
+                    self.flag = False
+                else:
+                    self.flag = True
+            elif complex_bool_expr.bool_rel.tokentype == token.NOT_EQUAL:
+                if self.current_value == temp:
+                    self.flag = True
+                else:
+                    self.flag = False
+            elif complex_bool_expr.bool_rel.tokentype == token.GREATER_THAN:
+                if temp > self.current_value:
+                    self.flag = False
+                else:
+                    self.flag = True
+            elif complex_bool_expr.bool_rel.tokentype == token.GREATER_THAN_EQUAL:
+                if temp >= self.current_value:
+                    self.flag = False
+                else:
+                    self.flag = True
+            elif complex_bool_expr.bool_rel.tokentype == token.LESS_THAN:
+                if temp < self.current_value:
+                    self.flag = False
+                else:
+                    self.flag = True
+            elif complex_bool_expr.bool_rel.tokentype == token.LESS_THAN_EQUAL:
+                if temp <= self.current_value:
+                    self.flag = False
+                else:
+                    self.flag = True
+        else:
+            if complex_bool_expr.bool_rel.tokentype == token.EQUAL:
+                if self.current_value == temp:
+                    self.flag = True
+                else:
+                    self.flag = False
+            elif complex_bool_expr.bool_rel.tokentype == token.NOT_EQUAL:
+                if self.current_value == temp:
+                    self.flag = False
+                else:
+                    self.flag = True
+            elif complex_bool_expr.bool_rel.tokentype == token.GREATER_THAN:
+                if temp > self.current_value:
+                    self.flag = True
+                else:
+                    self.flag = False
+            elif complex_bool_expr.bool_rel.tokentype == token.GREATER_THAN_EQUAL:
+                if temp >= self.current_value:
+                    self.flag = True
+                else:
+                    self.flag = False
+            elif complex_bool_expr.bool_rel.tokentype == token.LESS_THAN:
+                if temp < self.current_value:
+                    self.flag = True
+                else:
+                    self.flag = False
+            elif complex_bool_expr.bool_rel.tokentype == token.LESS_THAN_EQUAL:
+                if temp <= self.current_value:
+                    self.flag = True
+                else:
+                    self.flag = False
+
+        if complex_bool_expr.has_bool_connector:
+            complex_bool_expr.rest.accept(self)
+
+    def visit_if_stmt(self, if_stmt):
+        """ Uses the flag that is set in complex_bool_expr to determine which
+        part of the if block was true.  There as also another flag called
+        has_executed that will help us capture the else part of an if block
+        if none of the if statements were true. """
+        has_executed = False
+        if_stmt.if_part.bool_expr.accept(self)
+
+        if self.flag:
+            has_executed = True
+            if_stmt.if_part.stmt_list.accept(self)
+        for elseif in if_stmt.elseifs:
+            elseif.bool_expr.accept(self)
+            if self.flag:
+                has_executed = True
+                self.sym_table.push_environment()
+                elseif.stmt_list.accept(self)
+                self.sym_table.pop_environment()
+        if not has_executed:
+            if if_stmt.has_else:
+                if_stmt.else_stmts.accept(self)
+
+    def visit_while_stmt(self, while_stmt):
+        """ Actually uses a while loop to execute a while loop. """
+        self.flag = True
+        while self.flag:
+            while_stmt.bool_expr.accept(self)
+            if self.flag:
+                while_stmt.stmt_list.accept(self)
+            else:
+                break
+
+    def visit_assign_stmt(self, assign_stmt):
+        """ Basically the same as in the type checker, but now we are dealing
+        with values instead of types."""
+        lhs = assign_stmt.lhs
+        assign_stmt.rhs.accept(self)
+        if lhs.tokentype == token.ID:
+            lhs_lexeme = lhs.lexeme
+            if self.sym_table.variable_exists(lhs_lexeme):
+                self.sym_table.set_variable_value(lhs_lexeme, self.current_value)
+            else:
+                self.sym_table.add_variable(lhs_lexeme)
+                self.sym_table.set_variable_value(lhs_lexeme, self.current_value)
+
+    def visit_simple_expr(self, simple_expr):
+        """ Basically the same as in the type checker, but now we are dealing
+        with values instead of types."""
+        if simple_expr.term.tokentype == token.ID:
+            var_name = simple_expr.term.lexeme
+            var_val = self.sym_table.get_variable_value(var_name)
+            self.current_value = var_val
+        elif simple_expr.term.tokentype == token.INT:
+            self.current_value = int(simple_expr.term.lexeme)
+        elif simple_expr.term.tokentype == token.BOOL:
+            if simple_expr.term.lexeme == "true":
+                self.current_value = True
+            else:
+                self.current_value = False
+        elif simple_expr.term.tokentype == token.STRING:
+            self.current_value = simple_expr.term.lexeme
+
+    def __write(self, msg):
+        """ Helper function that will allow us to get around the print statements
+        in Python.  It will print something without the default new line
+        character. """
+        sys.stdout.write(str(msg))
+
+    def visit_print_stmt(self, print_stmt):
+        """ Behaves like Python print statements, but has a case where
+        boolean valeus can be printed """
+        print_stmt.expr.accept(self)
+        if type(self.current_value) == bool:
+            if self.current_value:
+                self.__write("true")
+            else:
+                self.__write("false")
+        else:
+            self.__write(self.current_value)
+        if print_stmt.is_println:
+            self.__write('\n')
+
+    def visit_read_expr(self, read_expr):
+        """ Basically the same as in the type checker, but now we are dealing
+        with values instead of types."""
+        val = raw_input(read_expr.msg.lexeme)
+        if read_expr.is_read_int:
+            try:
+                self.current_value = int(val)
+            except ValueError:
+                self.current_value = 0
+        else:
+            self.current_value = val
+
+    def visit_complex_expr(self, complex_expr):
+        """ Basically the same as in the type checker, but now we are dealing
+        with values instead of types.  It acutally does the computations
+        now instead of just checking for the types. """
+        complex_expr.rest.accept(self)
+        var_value = self.current_value
+        complex_expr.first_operand.accept(self)
+        math_rel = complex_expr.math_rel.tokentype
+        if math_rel == token.PLUS:
+            self.current_value += var_value
+        elif math_rel == token.MINUS:
+            self.current_value -= var_value
+        elif math_rel == token.MULTIPLY:
+            self.current_value *= var_value
+        elif math_rel == token.DIVIDE:
+            self.current_value /= var_value
+        elif math_rel == token.MODULUS:
+            self.current_value %= var_value
+"""
+Ryan Rozema
+mypl_type_checker.py
+hw6
+"""
+
+from mypl_ast import Visitor
+from mypl_symbol_table import *
+import mytoken as token
+from error import Error
+
+
+class TypeChecker(Visitor):
+
+    def __init__(self):
+        """ Initialiazes a TypeChecker """
+        self.sym_table = SymbolTable()
+        self.current_type = None
+
+    def visit_stmt_list(self, stmt_list):
+        """ Takes a statement and starts the TypeChecker """
+        self.sym_table.push_environment()
+        for stmt in stmt_list.stmts:
+            stmt.accept(self)
+        self.sym_table.pop_environment()
+
+    def visit_simple_bool_expr(self, simple_bool_expr):
+        """ Accepts a simple boolean expression """
+        simple_bool_expr.expr.accept(self)
+
+    def visit_complex_bool_expr(self, complex_bool_expr):
+        """ Accepts the first and second expression for a complex boolean
+        expression by default, if there are boolean connectors then the
+        rest is accepted. """
+        complex_bool_expr.first_expr.accept(self)
+        complex_bool_expr.second_expr.accept(self)
+        if complex_bool_expr.has_bool_connector:
+            complex_bool_expr.rest.accept(self)
+
+    def visit_if_stmt(self, if_stmt):
+        """ Accepts the if part of the statement, but doesn't need to push or
+        pop environments because it accepts a statement list. """
+        if_stmt.if_part.bool_expr.accept(self)
+        if_stmt.if_part.stmt_list.accept(self)
+        for elseif in if_stmt.elseifs:
+            elseif.bool_expr.accept(self)
+            self.sym_table.push_environment()
+            elseif.stmt_list.accept(self)
+            self.sym_table.pop_environment()
+        if if_stmt.has_else:
+            if_stmt.else_stmts.accept(self)
+
+    def visit_while_stmt(self, while_stmt):
+        """ Handles a while statement block """
+        while_stmt.bool_expr.accept(self)
+        while_stmt.stmt_list.accept(self)
+
+    def visit_print_stmt(self, print_stmt):
+        """ Accepts a print statement """
+        print_stmt.expr.accept(self)
+
+    def visit_assign_stmt(self, assign_stmt):
+        """ Handles the assignment statements for assinging values to variables
+        as well as readint and reastr expressions. """
+        lhs = assign_stmt.lhs
+        assign_stmt.rhs.accept(self)
+        if lhs.tokentype == token.ID:
+            lhs_lexeme = lhs.lexeme
+            if self.sym_table.variable_exists(lhs_lexeme):
+                lhs_type = self.sym_table.get_variable_type(lhs_lexeme)
+                if self.current_type != lhs_type:
+                    msg = "expecting " + lhs_type + " but got " + self.current_type
+                    raise Error(msg, lhs.line, lhs.column)
+            else:
+                self.sym_table.add_variable(lhs_lexeme)
+                self.sym_table.set_variable_type(lhs_lexeme, self.current_type)
+
+    def visit_simple_expr(self, simple_expr):
+        """ Handles a simple expression """
+        term = simple_expr.term
+        if term.tokentype == token.ID:
+            if self.sym_table.variable_exists(term.lexeme):
+                self.current_type = self.sym_table.get_variable_type(term.lexeme)
+            else:
+                msg = term.lexeme + " is used before it is defined"
+                raise Error(msg, term.line, term.column)
+        else:
+            self.current_type = term.tokentype
+
+    def visit_index_expr(self, index_expr):
+        print ""
+
+    def visit_list_expr(self, list_expr):
+        print ""
+
+    def visit_read_expr(self, read_expr):
+        """ Handles a readint or readstr expression """
+        node = read_expr.msg
+        if read_expr.is_read_int:
+            if node.tokentype != token.STRING:
+                msg = "expecting INT but got " + node.tokentype
+                raise Error(msg, node.line, node.column)
+            self.current_type = token.INT
+        else:
+            if node.tokentype != token.STRING:
+                msg = "expecting STRING but got " + node.tokentype
+                raise Error(msg, node.line, node.column)
+            self.current_type = token.STRING
+
+    def visit_complex_expr(self, complex_expr):
+        """ Handles a complex expression """
+        complex_expr.rest.accept(self)
+        first_op = complex_expr.first_operand.term
+        rhs = self.current_type
+        if rhs == token.STRING:
+            math_rel = complex_expr.math_rel.tokentype
+            if math_rel != token.PLUS:
+                msg = "You can only use '+' to concatenate Strings"
+                raise Error(msg, first_op.line, first_op.column)
+        else:
+            complex_expr.first_operand.accept(self)     # simple expr in curr type
+            first_op = complex_expr.first_operand.term
+            if self.current_type != rhs:
+                msg = "expecting " + rhs + " but got " + self.current_type
+                raise Error(msg, first_op.line, first_op.column)
