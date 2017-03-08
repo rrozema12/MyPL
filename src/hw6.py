@@ -3,13 +3,10 @@ import lexer
 import parser
 import error
 import mypl_type_checker as type_checker
+import mypl_interpreter
 
 
 def main(filename):
-    """ Opens a file and begins parsing the file.
-    :param filename: The path of a file the user would like to parse
-    :return: nothing if file is parsed without errors
-    """
     try:
         file_stream = open(filename, 'r')
         the_lexer = lexer.Lexer(file_stream)
@@ -17,6 +14,9 @@ def main(filename):
         stmt_list = the_parser.parse()
         checker = type_checker.TypeChecker()
         stmt_list.accept(checker)
+        interpreter = mypl_interpreter.Interpreter()
+        stmt_list.accept(interpreter)
+
     except IOError as e:
         print "error: unable to open file '" + filename + "'"
         sys.exit(1)

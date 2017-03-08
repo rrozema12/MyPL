@@ -1,0 +1,27 @@
+# obligatory hello world program
+println("Hello world!");
+
+
+# simple conditional statement
+x = readint("Enter an int: ");
+y = readint("Enter an int: ");
+if x > y then
+    println("The first int was bigger than the second!");
+elseif y > x then
+    println("The second int was bigger than the first!");
+else
+    println("You entered the same value twice!");
+end
+
+
+# simple while statement
+z = readint("Enter an int: ");
+i = 0;
+while z > 2 do
+    z = z / 2;
+    i = i + 1;
+end
+print("z = ");
+print(z);
+print(", i = ");
+println(i);

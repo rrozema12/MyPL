@@ -1,41 +1,38 @@
 # Interpreter for a Made up Language MyPL
 
-## Informal Description of MyPL Language
-The language supports basic assignment statements, arithmetic expressions, conditionals, loops, lists, and basic input/output. All variables are implicitly typed (i.e., the types of variables are inferred from their values). Programs consist of a sequence of statements given within a single file.  
+## Description
+The language supports basic assignment statements, arithmetic expressions, conditionals, loops, and basic input/output. All variables are implicitly typed (i.e., the types of variables are inferred from their values). Programs consist of a sequence of statements given within a single file.  
 
 The language constructs supported by MyPL are described in more detail below.
 
 1. **Primitive Data Types**   
-    > integer, string (using double quotes ""), and boolean (true and false)   
+    > The data types that MyPL uses are integers, strings (denoted with double quotes), and booleans (either true or false).
 
-2. **List Types**   
-    > MyPL uses Python-like lists.
+2. **Assignment Statements**   
+    > An assignment statement takes the form “var = expr;” where var is a valid identifier (a letter followed by zero or more letters, digits, or underscores) and expr is a valid expression. Assignment statements bind the variable to the value that results from evaluating the expression.
 
-3. **Assignment Statements**   
-    > An assignment statement takes the form “var = expr;” where var is a valid identifier (a letter followed by zero or more letters, digits, or underscores) and expr is a valid expression. Assignment statements bind the variable to the value that results from evaluating the expression. Assignment statements must end in a semicolon.
+3. **Output Statements**   
+    > MyPL uses pretty generic print statements. Some examples of print statements are “print(expr);” and “println(expr);”
 
-4. **Output Statements**   
-    > “print(expr);” or “println(expr);”
+4. **Math Operators**
+    > Math operators usch as +, -, \*, /, and % are all supported.
 
-5. **Math Operators**
-    > +, -, \*, /, and %
+5. **Relational Operators**
+    > Relational operators such as ==, <, >, <=, >=, and != are all supported.
 
-6. **Relational Operators**
-    > ==, <, >, <=, >=, and !=
+6. **Boolean Connectives**
+    > Connectives such as and, or, and not are all supported
 
-7. **Boolean Connectives**
-    > and, or, and not
+7. **Input Expressions**
+    > Valid user input prompts are readint(msg) and readstr(msg) where msg is of type string.
 
-8. **Input Expressions**
-    > readint(msg) and readstr(msg) where msg is of type string.
-
-9. **While Statements**
+8. **While Statements**
     > A while statement takes the form “while bool-expr do stmts end”, where bool-expr is a Boolean expression and stmts is a list of statements.
 
-10. **Conditional Statements**
+9. **Conditional Statements**
     > A condition statement takes the form “if bool-expr then stmts elseif bool-expr then stmts else stmts end”. A conditional statement can have zero or more elseif clauses and zero or one else clause. A conditional statement always ends with an “end” reserved word. Note that elseif is a distinct reserved word and should be used instead of an else followed by an if.
 
-11. **Comments**
+10. **Comments**
     > MyPL uses Python-like comments (#)
 
 ## Valid Grammar
@@ -95,9 +92,16 @@ println(i);
 
 ## Running the application
 Run the application with this command
-```bash
+```
 python hw6.py my_pl_file.txt
 ```
 
 ## Example Output
-TODO
+```
+Hello world!
+Enter an int: 6
+Enter an int: 5
+The first int was bigger than the second!
+Enter an int: 10
+z = 2, i = 2
+```

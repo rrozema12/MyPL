@@ -1,7 +1,7 @@
 """
 Ryan Rozema
 mypl_ast.py
-HW5
+hw6
 """
 class ASTNode(object):
     """The base class for the abstract syntax tree."""
