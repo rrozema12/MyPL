@@ -1,4 +1,4 @@
-# Interpreter for a Made up Language MyPL
+# Interpreter for a made up language MyPL
 
 ## Description
 MyPL supported elements are described below.
