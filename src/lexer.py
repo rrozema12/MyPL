@@ -1,11 +1,3 @@
-"""
-Ryan Rozema
-lexer.py
-HW5
-
-Creates a class that does all of the lexer work.
-"""
-
 import mytoken
 import error
 

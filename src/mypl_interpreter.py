@@ -1,9 +1,3 @@
-"""
-Ryan Rozema
-mypl_interpeter.py
-hw6
-"""
-
 from mypl_ast import Visitor
 from mypl_symbol_table import SymbolTable
 import mytoken as token
@@ -202,7 +196,7 @@ class Interpreter(Visitor):
         now instead of just checking for the types. """
         complex_expr.rest.accept(self)
         var_value = self.current_value
-        complex_expr.first_operand.accept(self)     
+        complex_expr.first_operand.accept(self)
         math_rel = complex_expr.math_rel.tokentype
         if math_rel == token.PLUS:
             self.current_value += var_value

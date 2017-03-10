@@ -1,10 +1,4 @@
-"""
-Ryan Rozema
-mypl_ast_printer
-hw5
-"""
 import mypl_ast as ast
-
 
 class ASTPrintVisitor(ast.Visitor):
     """An AST printer"""

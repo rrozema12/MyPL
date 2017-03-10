@@ -1,11 +1,3 @@
-"""
-Ryan Rozema
-mytoken.py
-HW5
-
-Defines the tokens
-"""
-
 PRINT = 'PRINT'
 PRINTLN = 'PRINTLN'
 READINT = 'READINT'

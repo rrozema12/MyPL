@@ -1,12 +1,3 @@
-"""
-Ryan Rozema
-error.py
-HW5
-
-Helper functions to throw errors.
-"""
-
-
 class Error(Exception):
     """Initializes an error with a message, line number, and column number.
     Also overrides the string method to print out the error."""

@@ -1,11 +1,3 @@
-"""
-Ryan Rozema
-parser.py
-hw5
-
-Parses a file.
-"""
-
 import mytoken
 from error import Error
 from mypl_ast import *

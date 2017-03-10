@@ -1,9 +1,3 @@
-"""
-Ryan Rozema
-mypl_type_checker.py
-hw6
-"""
-
 from mypl_ast import Visitor
 from mypl_symbol_table import *
 import mytoken as token

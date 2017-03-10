@@ -1,8 +1,3 @@
-"""
-Ryan Rozema
-my_symbol_table.py
-hw5
-"""
 class SymbolTable(object):
     def __init__(self):
         self.scopes = []        # list of {var_name:{'type':t, 'value':v}}

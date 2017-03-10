@@ -1,9 +1,3 @@
-"""
-Ryan Rozema
-hw6.py
-hw6
-"""
-
 import sys
 import lexer
 import parser
