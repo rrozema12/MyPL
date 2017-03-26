@@ -90,7 +90,7 @@ println(i);
 ## Running the application
 Run the program with this command in the terminal
 ```
-python mypl.py ../test/my_pl_file.txt
+python mypl.py ../programs/my_pl_file.txt
 ```
 
 ## Example Output
